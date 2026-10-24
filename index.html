@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#C65C9F">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Profissionais · Lev Soul</title>
+<link rel="icon" type="image/svg+xml" href="img/icone.svg">
+<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&amp;display=swap">
+<link rel="stylesheet" href="css/site.css?v=2">
+</head>
+<body>
+
+<!-- ═══ A PORTA: entrada, senha nova (fundo rosa vivo, igual ao do Cortex) ═══ -->
+<div id="porta" class="porta">
+  <div class="fundo" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="porta-cena">
+    <div class="porta-grade">
+      <img class="porta-logo" src="img/levsoul-logo-branco.svg" alt="Lev Soul" width="1466" height="215" draggable="false">
+
+      <!-- entrar -->
+      <form class="porta-caixa" id="f-entrar" novalidate>
+        <h1 class="porta-tit">Entre com o seu e-mail</h1>
+        <label class="sr" for="e-email">E-mail</label>
+        <input class="campo" id="e-email" type="email" name="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="seu e-mail" required>
+        <div class="linha-senha">
+          <label class="sr" for="e-senha">Senha</label>
+          <input class="campo" id="e-senha" type="password" name="password" autocomplete="current-password" placeholder="senha" required>
+          <button class="btn-porta" id="e-ok" type="submit">Entrar<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+        </div>
+        <p class="porta-erro" id="e-erro" role="alert" hidden></p>
+        <button class="link-porta" id="e-esqueci" type="button">Esqueci minha senha</button>
+      </form>
+
+      <!-- primeiro acesso: criar a senha -->
+      <form class="porta-caixa" id="f-senha" novalidate hidden>
+        <h1 class="porta-tit">Crie a sua senha</h1>
+        <p class="porta-sub" id="s-ola"></p>
+        <input type="text" name="username" autocomplete="username" id="s-usuario" hidden>
+        <label class="rot" for="s-nova">Nova senha</label>
+        <input class="campo" id="s-nova" type="password" autocomplete="new-password" required>
+        <label class="rot" for="s-repete">Repita a nova senha</label>
+        <input class="campo" id="s-repete" type="password" autocomplete="new-password" required>
+        <p class="porta-ajuda">Pelo menos 4 caracteres. Não pode ser 0000.</p>
+        <p class="porta-erro" id="s-erro" role="alert" hidden></p>
+        <button class="btn-porta largo" id="s-ok" type="submit">Salvar senha e entrar</button>
+        <button class="link-porta" id="s-voltar" type="button">Voltar</button>
+      </form>
+
+      <p class="porta-marca" aria-hidden="true">Profissionais</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DENTRO: a agenda ═══ -->
+<div id="app" class="app" hidden>
+  <header class="topo">
+    <div class="topo-in">
+      <svg class="topo-lua" viewBox="0 0 1756 1646" aria-hidden="true"><path d="M834 1644C700 1637 580 1606 467 1549C397 1514 338 1475 279 1423C261 1408 217 1364 202 1347C105 1236 42 1108 14 966C-7 852 -2 726 29 612C33 597 49 550 49 551C49 551 48 559 46 569C38 609 36 631 36 680C36 727 37 742 46 788C61 875 93 953 142 1027C243 1177 407 1284 594 1318C642 1327 683 1330 737 1329C805 1328 864 1320 929 1301C1018 1276 1106 1229 1177 1172C1202 1151 1236 1118 1256 1095C1347 991 1401 866 1413 732C1415 699 1415 652 1411 617C1394 456 1316 317 1184 212C1068 119 911 57 757 41C704 36 646 37 604 44C597 45 591 45 591 45C590 45 618 36 638 31C720 9 817 -2 879 2C977 8 1073 28 1167 62C1342 124 1489 223 1590 349C1670 448 1722 564 1743 691C1752 739 1754 768 1754 822C1754 867 1753 881 1748 919C1731 1063 1670 1203 1575 1320C1541 1363 1497 1407 1453 1443C1372 1509 1274 1563 1172 1597C1099 1621 1028 1636 943 1643C931 1644 847 1645 834 1644Z"/><path d="M673 1139C548 1129 422 1083 325 1010C284 979 244 939 216 900C168 832 139 752 133 664C131 647 131 612 133 594C146 415 257 256 426 174C586 97 775 98 934 177C987 205 1031 236 1074 279C1095 300 1108 315 1124 336C1171 399 1202 471 1215 548C1228 621 1223 701 1201 773C1197 786 1191 801 1191 800C1191 800 1191 796 1192 791C1206 730 1202 662 1180 597C1143 483 1054 390 937 344C852 311 760 304 670 325C607 339 545 368 493 409C477 422 443 456 431 471C384 531 356 594 346 668C344 683 343 731 344 748C354 852 401 940 486 1007C591 1092 748 1134 865 1109C871 1108 877 1107 877 1107C878 1108 832 1122 816 1126C797 1131 776 1135 758 1137C742 1139 691 1140 673 1139Z"/></svg>
+      <div class="topo-quem"><b id="a-nome">—</b><span>Centro Médico Judithe Ferreira</span></div>
+      <button class="topo-menu" id="a-menu" type="button" aria-haspopup="true" aria-expanded="false">Menu</button>
+      <div class="menu-caixa" id="a-menu-caixa" role="menu" hidden>
+        <button type="button" role="menuitem" data-acao="tutorial">Como funciona</button>
+        <button type="button" role="menuitem" data-acao="senha">Trocar minha senha</button>
+        <button type="button" role="menuitem" data-acao="sair">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="faixa" id="a-faixa" aria-label="Prazo da conferência">
+    <div class="fundo fundo-faixa" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="faixa-in">
+      <p class="faixa-periodo" id="a-periodo"></p>
+      <p class="faixa-rot" id="a-rot"></p>
+      <p class="faixa-grande" id="a-grande"></p>
+      <p class="faixa-sub" id="a-sub"></p>
+    </div>
+  </section>
+
+  <main class="miolo" id="a-miolo">
+    <div id="a-mes"></div>
+    <div id="a-regras"></div>
+    <div id="a-previa"></div>
+    <div id="a-lista"><p class="vazio">Carregando a sua agenda…</p></div>
+    <div id="a-recibos"></div>
+  </main>
+
+  <footer class="rodape" id="a-rodape" hidden>
+    <div class="rodape-in">
+      <button class="btn btn-pri btn-largo" id="a-confirmar" type="button">Está tudo certo — confirmar</button>
+      <p class="rodape-nota" id="a-nota"></p>
+    </div>
+  </footer>
+</div>
+
+<div id="camadas"></div>
+
+<script src="js/app.js?v=2"></script>
+</body>
+</html>

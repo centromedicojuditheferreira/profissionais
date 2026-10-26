@@ -297,7 +297,7 @@ function renderAberta(d){
   var fechaMes = fechaOMes(d);
   var ini = d.periodo_inicio || d.semana_inicio, fim = d.periodo_fim || d.semana_fim;
   $('#a-regras').innerHTML = '<div class="regras">' +
-    '<p><b>Confira consulta por consulta.</b> Algo errado na situação, no horário, no paciente ou no convênio? <b>Avise a recepção pelo WhatsApp e não confirme ainda.</b> A correção aparece aqui até a manhã seguinte.</p>' +
+    '<p><b>Confira consulta por consulta.</b> Algo errado na situação, no horário, no paciente ou no convênio? <b>Avise a recepção pelo WhatsApp e não confirme ainda.</b> A correção aparece aqui até a manhã seguinte. <b>Só confirme quando tudo estiver corrigido aqui.</b></p>' +
     '<p>' + (fechaMes ? 'Ao confirmar, o mês fecha e o seu recibo de repasse sai na hora.' : 'Depois de confirmada, a agenda não muda mais por aqui.') +
     ' <button type="button" class="link" data-tutorial>Como funciona</button></p>' +
     (ehCelular() ? '' : '<p class="alerta-txt">A confirmação é feita pelo celular e assinada com uma selfie.</p>') + '</div>';
@@ -790,7 +790,7 @@ function passos(){
        '<div class="item"><span class="hora">08:00</span><span class="nome">Paciente exemplo</span><span class="conv">Unimed Local</span><span class="situ"><span class="chip ok">Atendido</span></span></div>' +
        '<div class="item"><span class="hora">09:00</span><span class="nome">Paciente exemplo</span><span class="conv">Particular</span><span class="situ"><span class="chip falta">Não compareceu</span></span></div></div>' });
   lst.push({ t: 'Achou algo errado?',
-    p: 'Não confirme ainda. Avise a recepção pelo WhatsApp: ela corrige no sistema da clínica, e a correção aparece aqui até a manhã seguinte. Aí é só conferir de novo.',
+    p: 'Não confirme ainda. Avise a recepção pelo WhatsApp: ela corrige no sistema da clínica, e a correção aparece aqui até a manhã seguinte. Confira de novo e só confirme quando tudo estiver corrigido: depois de confirmada, a agenda não muda mais.',
     v: '<div class="v-balao"><b>Você, para a recepção</b>A consulta das 9h do dia 07/10 foi atendida, não foi falta.</div>' });
   lst.push({ t: 'Tudo certo? Confirme com uma selfie',
     p: 'Toque em “Está tudo certo — confirmar”, marque a declaração e tire uma selfie pelo celular. A selfie é a sua assinatura: é ela que registra que foi você quem confirmou.',

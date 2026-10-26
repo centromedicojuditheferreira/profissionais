@@ -766,7 +766,13 @@ function passos(){
   var esp = d.periodo_especial && d.tipo_periodo !== 'fechamento_mes';
   var semanal = d.tipo_periodo !== 'fechamento_mes' && d.abre_em;
   var abreDia = semanal ? diaSemana(d.abre_em) : 'segunda-feira', abreH = semanal ? horaCurta(d.abre_em) : '8h';
-  var prazoDia = d.prazo ? diaSemana(d.prazo) : 'segunda-feira', prazoH = d.prazo ? horaCurta(d.prazo) : (sess.horaPrazo || '22h');
+  /* v3.2: o passo a passo ensina a regra das semanas normais (prazo no mesmo dia da abertura);
+     o prazo próprio de um período especial vai só na nota */
+  var hSem = d.prazo_semanal_hora ? String(d.prazo_semanal_hora).split(':') : null;
+  var prazoDia = semanal ? abreDia : (d.prazo ? diaSemana(d.prazo) : 'segunda-feira');
+  var prazoH = hSem ? (hSem[1] === '00' ? Number(hSem[0]) + 'h' : Number(hSem[0]) + 'h' + hSem[1])
+                    : (d.prazo ? horaCurta(d.prazo) : (sess.horaPrazo || '22h'));
+  var espDiaPrazo = esp && d.prazo && diaSemana(d.prazo) !== abreDia;
   lst.push({ t: 'A sua agenda, conferida por você',
     p: 'Aqui você confere as consultas que fez na clínica e confirma que está tudo certo. É por essa agenda que a clínica fatura os atendimentos e calcula o seu repasse.',
     v: SVG_LUAS });
@@ -774,7 +780,9 @@ function passos(){
     p: (abreDia === prazoDia
          ? 'Às ' + abreH + ' da ' + abreDia.replace('-feira', '') + ', a agenda da semana anterior fica disponível aqui. Você tem até as ' + prazoH + ' do mesmo dia para conferir e confirmar.'
          : 'A partir de ' + abreDia + ', às ' + abreH + ', a agenda da semana anterior fica disponível aqui. O prazo para conferir e confirmar é ' + prazoDia + ', às ' + prazoH + '.'),
-    nota: esp ? 'Nesta primeira vez, a conferência vai de ' + ddmm(d.periodo_inicio) + ' a ' + ddmm(d.periodo_fim) + '.' : '',
+    nota: esp ? 'Nesta primeira vez, a conferência vai de ' + ddmm(d.periodo_inicio) + ' a ' + ddmm(d.periodo_fim) +
+                (espDiaPrazo ? ', e o prazo é ' + diaSemana(d.prazo) + ' (' + ddmmTs(d.prazo) + '), às ' + horaCurta(d.prazo) +
+                               '. Só desta vez. Nas próximas semanas, o prazo é sempre ' + abreDia + ', às ' + prazoH + '.' : '.') : '',
     v: '<div class="v-dia"><div><small>Abre</small><b>' + abreH + '</b></div><div><small>Prazo</small><b>' + prazoH + '</b></div></div>' });
   lst.push({ t: 'Confira consulta por consulta',
     p: 'Cada consulta aparece com o horário, o paciente, o convênio e a situação: Atendido ou Não compareceu. Remarcações não aparecem.',

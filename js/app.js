@@ -247,14 +247,17 @@ function pintaFaixa(d){
       cls = 'antes'; rot = 'A conferência abre';
       grande = diaSemana(d.abre_em).replace('-feira', '') + ', ' + horaCurta(d.abre_em);
       sub = msA > 0 ? 'Faltam ' + faltaTxt(msA) + '. Você será avisado pelo WhatsApp.' : 'Liberando agora. Atualize a página.';
-    } else if(d.motivo === 'fechada' || agora() > fech){
+    } else if(d.motivo === 'fechada' || (agora() > fech && d.tipo_periodo !== 'fechamento_mes')){   /* PROF_COBRA v1.0: o fim do mês não trava; fica aberto até confirmar */
       cls = 'fechada'; grande = 'Período encerrado';
       sub = 'A agenda seguiu para o faturamento com as informações registradas.' + (d.proxima_abertura ? ' A próxima conferência abre ' + fmtDiaHora(d.proxima_abertura) + '.' : '');
     } else {
       var ms = prazo - agora();
       if(ms <= 0){
         cls = 'passou'; grande = 'Prazo encerrado';
-        sub = 'O prazo era ' + fmtDiaHora(d.prazo) + '. Se ainda houver alguma correção, avise a recepção agora.';
+        sub = d.tipo_periodo === 'fechamento_mes'
+          ? 'O prazo era ' + fmtDiaHora(d.prazo) + '. Confirme o quanto antes: ' +
+            (d.regime && d.regime.gera_recibo ? 'o seu recibo de repasse só sai depois da confirmação.' : 'o seu mês só fecha depois da confirmação.')
+          : 'O prazo era ' + fmtDiaHora(d.prazo) + '. Se ainda houver alguma correção, avise a recepção agora.';
       } else {
         cls = ms < 4 * 36e5 ? 'alerta' : ''; rot = 'Faltam'; grande = faltaTxt(ms);
         sub = 'para conferir e confirmar. Prazo: ' + fmtDiaHora(d.prazo) + '.' + (d.modo_teste ? ' (Acesso de teste até ' + fmtTs(d.teste_ate) + '.)' : '');

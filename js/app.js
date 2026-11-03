@@ -220,8 +220,12 @@ function fechaOMes(d){   /* a confirmação deste período gera o recibo: os úl
   var fim = d && (d.periodo_fim || d.semana_fim);
   return !!d && (d.tipo_periodo === 'fechamento_mes' || (!!fim && dLocal(fim).getDate() === ultimoDiaDoMes(fim)));
 }
+function mesInteiro(d){   /* fim do mês sob período especial: a conferência mostra o mês inteiro, não só os últimos dias */
+  return !!d && d.tipo_periodo === 'fechamento_mes' && !!d.periodo_especial;
+}
 function periodoTxt(d){
   var ini = d.periodo_inicio || d.semana_inicio, fim = d.periodo_fim || d.semana_fim;
+  if(mesInteiro(d)) return cap(MESES[dLocal(fim).getMonth()]) + ' inteiro: ' + ddmm(ini) + ' a ' + ddmm(fim);
   if(d.tipo_periodo === 'fechamento_mes') return 'Últimos dias de ' + MESES[dLocal(fim).getMonth()] + ': ' + ddmm(ini) + ' a ' + ddmm(fim);
   return (d.periodo_especial ? 'Agenda de ' : 'Semana de ') + ddmm(ini) + ' a ' + ddmm(fim);
 }
@@ -250,6 +254,10 @@ function pintaFaixa(d){
     } else if(d.motivo === 'fechada' || (agora() > fech && d.tipo_periodo !== 'fechamento_mes')){   /* PROF_COBRA v1.0: o fim do mês não trava; fica aberto até confirmar */
       cls = 'fechada'; grande = 'Período encerrado';
       sub = 'A agenda seguiu para o faturamento com as informações registradas.' + (d.proxima_abertura ? ' A próxima conferência abre ' + fmtDiaHora(d.proxima_abertura) + '.' : '');
+    } else if(d.tipo_periodo === 'fechamento_mes'){   /* regra do dono: a conferência do pagamento não tem prazo; fica aberta até confirmar */
+      cls = 'alerta'; grande = 'Aberta até você confirmar';
+      sub = 'Confirme o quanto antes: ' +
+            (d.regime && d.regime.gera_recibo ? 'o seu recibo de repasse só sai depois da confirmação.' : 'o seu mês só fecha depois da confirmação.');
     } else {
       var ms = prazo - agora();
       if(ms <= 0){
@@ -315,7 +323,7 @@ function renderAberta(d){
   btn.textContent = fechaMes ? 'Está tudo certo — confirmar o mês' : 'Está tudo certo — confirmar';
   btn.disabled = false;
   btn.onclick = function(){ abreConfirmacao(d); };
-  $('#a-nota').textContent = (d.prazo_passou || d.fechada) ? 'O prazo encerrou. A confirmação fica registrada como feita depois do prazo.'
+  $('#a-nota').textContent = (d.tipo_periodo !== 'fechamento_mes' && (d.prazo_passou || d.fechada)) ? 'O prazo encerrou. A confirmação fica registrada como feita depois do prazo.'
     : 'Só confirme se não houver nenhuma correção pendente na recepção.' + (ehCelular() ? '' : ' A confirmação é feita pelo celular.');
 }
 
@@ -371,7 +379,7 @@ function comparaAnterior(m){   /* comparado só com o próprio mês anterior; su
 function incremento(m, d){   /* quanto entrou no último período liberado, e como chamar esse período */
   if(!m.semana || !(Number(m.semana.valor) > 0)) return null;
   var fim = d && (d.periodo_fim || d.semana_fim), rot;
-  if(fim === m.semana.fim) rot = fechaOMes(d) ? 'nos últimos dias do mês' : (d.periodo_especial ? 'neste período' : 'nesta semana');
+  if(fim === m.semana.fim) rot = mesInteiro(d) ? 'no mês' : fechaOMes(d) ? 'nos últimos dias do mês' : (d.periodo_especial ? 'neste período' : 'nesta semana');
   else rot = 'de ' + ddmm(m.semana.inicio) + ' a ' + ddmm(m.semana.fim);
   return { valor: Number(m.semana.valor), rot: rot, atendidos: m.semana.atendidos };
 }
@@ -392,7 +400,7 @@ function rotuloPeriodo(m, d){   /* como chamar o último período liberado */
   if(!d) return 'na última semana';
   var fim = d.periodo_fim || d.semana_fim;
   if(m.semana && fim !== m.semana.fim) return 'de ' + ddmm(m.semana.inicio) + ' a ' + ddmm(m.semana.fim);
-  return fechaOMes(d) ? 'nos últimos dias do mês' : (d.periodo_especial ? 'neste período' : 'nesta semana');
+  return mesInteiro(d) ? 'no mês' : fechaOMes(d) ? 'nos últimos dias do mês' : (d.periodo_especial ? 'neste período' : 'nesta semana');
 }
 function sequenciaHtml(m, d){
   var p = m.presenca; if(!p || p.sequencia == null) return '';
@@ -473,8 +481,8 @@ function notaMes(m, d){
   var mes = nomeDoMes(m.competencia);
   if(m.completo){
     if(m.recibo_gerado) return 'O recibo de ' + mes + ' já saiu: está logo abaixo, em Recibos de repasse.';
-    return (fechaOMes(d) && (d.periodo_fim || d.semana_fim) === m.ate && d.aberta !== false) ? 'Confirme estes últimos dias e o recibo sai na hora, na tela e em PDF.'
-         : 'O recibo de ' + mes + ' sai quando você confirmar os últimos dias do mês.';
+    return (fechaOMes(d) && (d.periodo_fim || d.semana_fim) === m.ate && d.aberta !== false) ? (mesInteiro(d) ? 'Confirme o mês e o recibo sai na hora, na tela e em PDF.' : 'Confirme estes últimos dias e o recibo sai na hora, na tela e em PDF.')
+         : 'O recibo de ' + mes + ' sai quando você confirmar ' + (mesInteiro(d) ? 'o mês.' : 'os últimos dias do mês.');
   }
   if(d.motivo === 'antes_da_abertura' && d.abre_em) return 'O valor atualiza ' + fmtDiaHora(d.abre_em) + ', quando a próxima conferência abre. No dia 1º, você confirma os últimos dias do mês e o recibo sai na hora.';
   return 'O valor cresce toda segunda, quando a semana abre para conferência. No dia 1º, você confirma os últimos dias do mês e o recibo sai na hora.';
@@ -521,7 +529,7 @@ function confetes(){
 }
 function semanaFesta(m, fechaMes, d0){   /* a semana que acabou de ser assinada: desmarcou alguém? e a sequência */
   var p = m.presenca; if(!p || p.semana_desmarcadas == null) return '';
-  var sd = Number(p.semana_desmarcadas) || 0, sq = Number(p.sequencia) || 0, rot = fechaMes ? 'Nos últimos dias do mês' : (d0 && d0.periodo_especial ? 'Neste período' : 'Nesta semana');
+  var sd = Number(p.semana_desmarcadas) || 0, sq = Number(p.sequencia) || 0, rot = mesInteiro(d0) ? 'No mês' : fechaMes ? 'Nos últimos dias do mês' : (d0 && d0.periodo_especial ? 'Neste período' : 'Nesta semana');
   if(sd > 0) return '<p class="festa-meta">' + rot + ', você desmarcou <b>' + plural(sd, 'paciente', 'pacientes') + '</b>.' + (d0 && d0.periodo_especial ? '' : ' A sequência de semanas sem desmarcar recomeça.') + '</p>';
   if((m.atendidos || 0) + (m.faltas || 0) === 0) return '';
   return '<p class="festa-meta ok"><b>' + rot + ', você não desmarcou nenhum paciente.</b>' + (sq >= 2 ? ' São ' + sq + ' semanas seguidas.' : '') + '</p>';
@@ -563,7 +571,7 @@ function comemora(d0, m, conf){   /* d0: o período confirmado; m: o mês que es
     '<p class="festa-sub">' + (fechaMes ? (recibo ? 'A agenda está confirmada e o seu recibo de repasse já saiu.' : 'A agenda do mês está confirmada.') : 'A sua selfie ficou registrada com a confirmação.') + '</p>' +
     '<div class="festa-bloco"><small>' + (fechaMes || m.completo ? 'Total de ' + mes : cap(mes) + ' até agora') + '</small>' +
       '<b class="festa-num" data-de="' + de + '" data-ate="' + Number(m.total) + '">' + brl(de) + '</b>' +
-      (inc > 0 && de > 0 ? '<span>+ ' + brl(inc) + ' ' + (fechaMes ? 'nos últimos dias' : (d0.periodo_especial ? 'neste período' : 'nesta semana')) + ' · ' + plural(atend, 'atendimento', 'atendimentos') + '</span>'
+      (inc > 0 && de > 0 ? '<span>+ ' + brl(inc) + ' ' + (mesInteiro(d0) ? 'no mês' : fechaMes ? 'nos últimos dias' : (d0.periodo_especial ? 'neste período' : 'nesta semana')) + ' · ' + plural(atend, 'atendimento', 'atendimentos') + '</span>'
        : '<span class="neutro">' + plural(m.atendidos, 'atendimento', 'atendimentos') + ' de ' + ddmm(m.inicio) + ' a ' + ddmm(m.ate) + '</span>') +
       semanaFesta(m, fechaMes, d0) + metaFesta(m) + '</div></div>';
   var botoes = (fechaMes && recibo) ? '<button type="button" class="btn" data-fecha>Fechar</button><button type="button" class="btn btn-pri" id="festa-recibo">Ver o recibo</button>'
